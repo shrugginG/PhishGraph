@@ -45,11 +45,26 @@ func ConnectDB() (*pgx.Conn, error) {
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
-	log.Print(connStr)
 	conn, err := pgx.Connect(context.Background(), connStr)
 	if err != nil {
 		return nil, err
 	}
 
 	return conn, nil
+}
+
+func URLExists(url string) (bool, error) {
+	conn, err := ConnectDB()
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v", err)
+	}
+	defer conn.Close(context.Background())
+
+	var exists bool
+	query := `SELECT EXISTS (SELECT 1 FROM webpage_links WHERE url = $1)`
+	err = conn.QueryRow(context.Background(), query, url).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }

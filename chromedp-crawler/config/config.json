@@ -1,0 +1,7 @@
+{
+  "db_user": "jxlu",
+  "db_password": "lujunxi",
+  "db_name": "phishgraph",
+  "db_host": "localhost",
+  "db_port": "5432"
+}
