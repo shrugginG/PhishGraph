@@ -3,11 +3,12 @@ package crawler
 import (
 	"chromedp-crawler/utils"
 	"context"
-	"fmt"
+
+	// "fmt"
 	"log"
 	"time"
 
-	"github.com/chromedp/cdproto/network"
+	// "github.com/chromedp/cdproto/network"
 	"github.com/chromedp/chromedp"
 )
 
@@ -38,24 +39,24 @@ func CollectLinks(url string) (string, []string, error) {
 	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
-	var statusCode int64
-	var firstRequestID network.RequestID
+	// var statusCode int64
+	// var firstRequestID network.RequestID
 
-	chromedp.ListenTarget(ctx, func(ev interface{}) {
-		switch ev := ev.(type) {
-		case *network.EventRequestWillBeSent:
-			log.Printf(`Request URL: %s`, ev.Request.URL)
-			if firstRequestID == "" {
-				firstRequestID = ev.RequestID
-			}
-
-		case *network.EventResponseReceived:
-			fmt.Print(ev.Response.Status)
-			if ev.RequestID == firstRequestID {
-				statusCode = ev.Response.Status
-			}
-		}
-	})
+	// chromedp.ListenTarget(ctx, func(ev interface{}) {
+	// 	switch ev := ev.(type) {
+	// 	case *network.EventRequestWillBeSent:
+	// 		log.Printf(`Request URL: %s`, ev.Request.URL)
+	// 		if firstRequestID == "" {
+	// 			firstRequestID = ev.RequestID
+	// 		}
+	//
+	// 	case *network.EventResponseReceived:
+	// 		fmt.Print(ev.Response.Status)
+	// 		if ev.RequestID == firstRequestID {
+	// 			statusCode = ev.Response.Status
+	// 		}
+	// 	}
+	// })
 
 	var contentType string
 	var links []string
@@ -67,7 +68,6 @@ func CollectLinks(url string) (string, []string, error) {
 		chromedp.Sleep(15*time.Second),
 		chromedp.Evaluate(`document.contentType`, &contentType),
 		chromedp.Evaluate(`Array.from(document.querySelectorAll('a')).map(a => a.href)`, &links),
-		chromedp.Sleep(1000*time.Second),
 	)
 
 	log.Printf(`[%s] content-type: %s`, url, contentType)
@@ -77,9 +77,8 @@ func CollectLinks(url string) (string, []string, error) {
 	}
 
 	if contentType != "text/html" {
-		log.Printf(`URL status code: %d`, statusCode)
+		// log.Printf(`URL status code: %d`, statusCode)
 		log.Printf(`URL is not an HTML page: %s (content-type: %s)`, url, contentType)
-
 	}
 
 	removedDuplicateLinks := utils.RemoveDuplicates(links)
@@ -88,7 +87,7 @@ func CollectLinks(url string) (string, []string, error) {
 	// for _, link := range links {
 	// 	linkSet[link] = struct{}{}
 	// }
-	log.Printf(`URL status code: %d`, statusCode)
+	// log.Printf(`URL status code: %d`, statusCode)
 
 	return contentType, removedDuplicateLinks, nil
 }

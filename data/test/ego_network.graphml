@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="color" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="https://www.example.com/">
+      <data key="d0">red</data>
+    </node>
+    <node id="https://www.example.com/login">
+      <data key="d0">red</data>
+    </node>
+    <node id="https://www.example.com/register">
+      <data key="d0">red</data>
+    </node>
+    <node id="https://www.external.com/news">
+      <data key="d0">blue</data>
+    </node>
+    <node id="https://www.another.com/about">
+      <data key="d0">blue</data>
+    </node>
+    <node id="https://www.example.com/help">
+      <data key="d0">red</data>
+    </node>
+    <node id="https://sub.external.com/">
+      <data key="d0">green</data>
+    </node>
+    <node id="https://www.another.com/support">
+      <data key="d0">green</data>
+    </node>
+    <edge source="https://www.example.com/" target="https://www.example.com/login" />
+    <edge source="https://www.example.com/" target="https://www.example.com/register" />
+    <edge source="https://www.example.com/" target="https://www.external.com/news" />
+    <edge source="https://www.example.com/" target="https://www.another.com/about" />
+    <edge source="https://www.example.com/login" target="https://www.example.com/help" />
+    <edge source="https://www.external.com/news" target="https://sub.external.com/" />
+    <edge source="https://www.another.com/about" target="https://www.another.com/support" />
+  </graph>
+</graphml>

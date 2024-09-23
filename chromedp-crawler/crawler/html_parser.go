@@ -1,6 +1,7 @@
-package main
+package crawler
 
 import (
+	"chromedp-crawler/utils"
 	"fmt"
 	"net/url"
 	"strings"
@@ -8,7 +9,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-func extractAndFormatLinks(n *html.Node, baseURL string, parsedURL *url.URL) []string {
+func ExtractAndFormatLinks(n *html.Node, baseURL string, parsedURL *url.URL) []string {
 	var links []string
 
 	if n.Type == html.ElementNode && n.Data == "a" {
@@ -45,10 +46,10 @@ func extractAndFormatLinks(n *html.Node, baseURL string, parsedURL *url.URL) []s
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		links = append(links, extractAndFormatLinks(c, baseURL, parsedURL)...)
+		links = append(links, ExtractAndFormatLinks(c, baseURL, parsedURL)...)
 	}
 
-	removedDuplicatesLinks := RemoveDuplicates(links)
+	removedDuplicatesLinks := utils.RemoveDuplicates(links)
 
 	return removedDuplicatesLinks
 }

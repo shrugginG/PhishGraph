@@ -4,7 +4,9 @@ import (
 	"chromedp-crawler/utils"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"os"
 )
 
 func SaveLinks(url string, links []string) {
@@ -27,4 +29,25 @@ func SaveLinks(url string, links []string) {
 	}
 
 	log.Println("Successfully saved links to database")
+}
+
+func SaveLinksAsJson(path string, links []string) {
+	outputFile, err := os.Create(path)
+	if err != nil {
+		fmt.Printf("Error creating JSON file: %v", err)
+		return
+	}
+	defer outputFile.Close()
+	fmt.Println("Hello")
+	jsonData, err := json.MarshalIndent(links, "", "  ") // 格式化 JSON 数据
+	if err != nil {
+		fmt.Printf("Error marshalling to JSON: %v", err)
+		return
+	}
+
+	_, err = outputFile.Write(jsonData)
+	if err != nil {
+		fmt.Printf("Error writing JSON to file: %v", err)
+		return
+	}
 }
