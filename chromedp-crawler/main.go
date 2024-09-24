@@ -49,10 +49,7 @@ func main() {
 	processedBaseURL := baseURLScheme + "://" + baseURLHost + basedURLPath
 
 	links := crawler.ExtractAndFormatLinks(doc, processedBaseURL, parsedBaseURL)
-
-	// linksJsonFile := "/home/jxlu/project/PhishDetect/PhishGraph/data/aafc21845bccf1ad2181e9dd53b5cf5b1db029ed5a95bf106b4d7c9670b7e0f3/links.json"
-	linksJsonFile := fmt.Sprintf("%s/%s/links.json", basePath, urlsha256)
-	storage.SaveLinksAsJson(linksJsonFile, links)
+	linksContentTypeMap := make(map[string]string)
 
 	var waitForCrawlUrls []string
 	for _, link := range links {
@@ -66,6 +63,8 @@ func main() {
 		} else {
 			if parsedURL.Path != basedURLPath {
 				waitForCrawlUrls = append(waitForCrawlUrls, link)
+			} else {
+				linksContentTypeMap[link] = "text/html"
 			}
 		}
 	}
@@ -75,19 +74,6 @@ func main() {
 	fmt.Println(waitForCrawlUrls)
 	fmt.Println(len(waitForCrawlUrls))
 
-	// test_url := "https://learn.microsoft.com
-	//
-	// log.Printf(`Crawling target url: [%s]`, test_url)
-	// contentType, links, error := crawler.CollectLinks(test_url)
-	// if error != nil {
-	// 	log.Printf("Error collecting links: %v", error)
-	// }
-	// log.Printf(`Collected links: %s`, links)
-	// if contentType == "text/html" {
-	// 	fmt.Print("Hello")
-	// 	storage.SaveLinks(test_url, links)
-	// }
-	//
 	for _, link := range waitForCrawlUrls {
 
 		log.Printf("Crawling link: [%s]", link)
@@ -95,11 +81,15 @@ func main() {
 		contentType, links, error := crawler.CollectLinks(link)
 		if error != nil {
 			log.Print(error)
+			linksContentTypeMap[link] = "Error"
 			continue
 		}
 		log.Printf(`Links for [%s]: %s`, link, links)
-		if contentType == "text/html" {
-			storage.SaveLinks(link, links)
-		}
+
+		linksContentTypeMap[link] = contentType
+		storage.SaveLinks(link, links, contentType)
 	}
+
+	linksJsonFile := fmt.Sprintf("%s/%s/links_contenttype_map.json", basePath, urlsha256)
+	storage.SaveLinksContentTypeAsJson(linksJsonFile, linksContentTypeMap)
 }

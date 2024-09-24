@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func SaveLinks(url string, links []string) {
+func SaveLinks(url string, links []string, contentType string) {
 	// log.Printf("Saving %d unique links", len(links))
 
 	conn, err := utils.ConnectDB()
@@ -22,8 +22,8 @@ func SaveLinks(url string, links []string) {
 		log.Fatalf("Error marshalling links: %v", err)
 	}
 
-	query := `INSERT INTO webpage_links (url, links) VALUES ($1, $2) ON CONFLICT (url) DO NOTHING`
-	_, err = conn.Exec(context.Background(), query, url, linksJSON)
+	query := `INSERT INTO webpage_links (url, links, content_type) VALUES ($1, $2, $3) ON CONFLICT (url) DO NOTHING`
+	_, err = conn.Exec(context.Background(), query, url, linksJSON, contentType)
 	if err != nil {
 		log.Fatalf("Failed to insert links: %v", err)
 	}
@@ -40,6 +40,27 @@ func SaveLinksAsJson(path string, links []string) {
 	defer outputFile.Close()
 	fmt.Println("Hello")
 	jsonData, err := json.MarshalIndent(links, "", "  ") // 格式化 JSON 数据
+	if err != nil {
+		fmt.Printf("Error marshalling to JSON: %v", err)
+		return
+	}
+
+	_, err = outputFile.Write(jsonData)
+	if err != nil {
+		fmt.Printf("Error writing JSON to file: %v", err)
+		return
+	}
+}
+
+func SaveLinksContentTypeAsJson(path string, linksContentType map[string]string) {
+	outputFile, err := os.Create(path)
+	if err != nil {
+		fmt.Printf("Error creating JSON file: %v", err)
+		return
+	}
+	defer outputFile.Close()
+	fmt.Println("Hello")
+	jsonData, err := json.MarshalIndent(linksContentType, "", "  ")
 	if err != nil {
 		fmt.Printf("Error marshalling to JSON: %v", err)
 		return
